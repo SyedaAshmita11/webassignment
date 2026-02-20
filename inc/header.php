@@ -1,125 +1,91 @@
-<?php
-  //set headers to NOT cache a page
-  header("Cache-Control: no-cache, must-revalidate"); //HTTP 1.1
-  header("Pragma: no-cache"); //HTTP 1.0
-  header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); 
-  // Date in the past
-  //or, if you DO want a file to cache, use:
-  header("Cache-Control: max-age=2592000"); 
-//30days (60sec * 60min * 24hours * 30days)
-?>
-
 <?php 
-    include '../lib/Session.php';
-    Session:: checkSession();
+ include 'lib/Database.php';
+ include 'config/config.php';
+ include 'helpers/Format.php';
 ?>
-<?php 
-    include '../lib/Database.php';
-    include '../config/config.php';
-    include '../helpers/Format.php';
-?>
+<!-- I am creating objects here so that i can access it from any page, becuase header is includeded in every page -->
 <?php
-    $db = new Database();
-    $fm = new Format();
+$db = new Database();
+$fm = new Format();
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>Admin Panel</title>
-<link rel="stylesheet" type="text/css" href="css/reset.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="css/text.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="css/grid.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="css/layout.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="css/nav.css" media="screen" />
-<link href="css/table/demo_page.css" rel="stylesheet" type="text/css" />
-<!-- BEGIN: load jquery -->
-<script src="js/jquery-1.6.4.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="js/jquery-ui/jquery.ui.core.min.js"></script>
-<script src="js/jquery-ui/jquery.ui.widget.min.js" type="text/javascript"></script>
-<script src="js/jquery-ui/jquery.ui.accordion.min.js" type="text/javascript"></script>
-<script src="js/jquery-ui/jquery.effects.core.min.js" type="text/javascript"></script>
-<script src="js/jquery-ui/jquery.effects.slide.min.js" type="text/javascript"></script>
-<script src="js/jquery-ui/jquery.ui.mouse.min.js" type="text/javascript"></script>
-<script src="js/jquery-ui/jquery.ui.sortable.min.js" type="text/javascript"></script>
-<script src="js/table/jquery.dataTables.min.js" type="text/javascript"></script>
-<!-- END: load jquery -->
-<script type="text/javascript" src="js/table/table.js"></script>
-<script src="js/setup.js" type="text/javascript"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-    setupLeftMenu();
-    setSidebarHeight();
-    });
-</script>
+	x
+	<!-- change korte hobe -->
+	<?php include 'scrips/meta.php' ; ?>
+	<?php include 'scrips/css.php' ; ?>
+	<?php include 'scrips/js.php' ; ?>
+
 
 </head>
+
 <body>
-<div class="container_12">
-<div class="grid_12 header-repeat">
-<div id="branding">
-    <div class="floatleft logo">
-        <img src="img/livelogo.png" alt="Logo" />
-    </div>
-    <div class="floatleft middle">
-        <h1>Educating Dumb Machines</h1>
-            
-    </div>
-    <div class="floatright">
-        <div class="floatleft">
-            <img src="img/img-profile.jpg" alt="Profile Pic" /></div>
-        <div class="floatleft marginleft10">
-        <?php
-        if (isset($_GET['action']) && $_GET['action']) {
-            Session:: destroy();
-        }
-        ?>  
-            <ul class="inline-ul floatleft">
-<?php echo Session::get('userRole');?>
-                <li>Hello <?php echo Session::get('username');?> </li>
-                <li>
-                    
-                <a href="?action=logout">Logout</a>
-            
-            </li>
-            </ul>
-        </div>
-    </div>
-    <div class="clear">
-    </div>
-</div>
-</div>
-<div class="clear">
-</div>
-<div class="grid_12">
-<ul class="nav main">
-    <li class="ic-dashboard"><a href="index.php"><span>Dashboard</span></a> </li>
-    <li class="ic-form-style"><a href="userProfile.php"><span>User Profile</span></a></li>
-    <li class="ic-typography"><a href="changepassword.php"><span>Change Password</span></a></li>
-    <li class="ic-grid-tables"><a href="inbox.php"><span>Inbox
-        <?php
-         $query = "SELECT * FROM tbl_contact WHERE status='0' ORDER BY id DESC";
-         $msg = $db->select($query);
-         if ($msg) {
-             $count = mysqli_num_rows($msg);
-             echo "(".$count.")";
-         }else{
-             echo "0";
-         }
-        ?>
-    </span></a></li>
-
-
+	<div class="headersection templete clear">
 <?php
-//acces only for admin 
-if (Session::get('userRole') == '0') {  ?>
+ $query = "SELECT * FROM title_slogan WHERE id = 1";
+ $getData = $db->select($query);
+ if ($getData) {
+	while ($result = $getData->fetch_assoc()) {
+?>		
+	<a href="#">
+		<div class="logo">
+			<img src="admin/<?php echo $result['logo'] ?>" alt="Logo"/>
+			<h2><?php echo $result['title'] ?></h2>
+			<p><?php echo $result['slogan'] ?></p>
+		</div>
+	</a>
 
-    <li class="ic-charts"><a href="addUser.php"><span>Add User</span></a></li>
-<?php } ?>
-   <li class="ic-charts"><a href="userlist.php"><span>User List</span></a></li>
-    <li class="ic-charts"><a href="postlist.php"><span>Visit Website</span></a></li>
-</ul>
+<?php } }?>
+	<div class="social clear">
+<?php
+$query = "SELECT * FROM tbl_social WHERE id = 1";
+$getSocial = $db->select($query);
+if ($getSocial) {
+	while ($data = $getSocial->fetch_assoc()) {
+?>
+<div class="icon clear">
+<a href="<?php echo $data['fb']?>" target="_blank"><i class="fa fa-facebook"></i></a>
+<a href="<?php echo $data['tw']?>" target="_blank"><i class="fa fa-twitter"></i></a>
+<a href="<?php echo $data['ln']?>" target="_blank"><i class="fa fa-linkedin"></i></a>
+<a href="<?php echo $data['gp']?>" target="_blank"><i class="fa fa-google-plus"></i></a>
 </div>
-<div class="clear">
+<?php } }?>
+
+		<div class="searchbtn clear">
+		<form action="search.php" method="get">
+			<input type="text" name="search" placeholder="Search keyword..."/>
+			<input type="submit" name="submit" value="Search"/>
+		</form>
+		</div>
+	</div>
+</div>
+<div class="navsection templete">
+	<?php //	highlight current page or menu item	
+	  $path = $_SERVER['SCRIPT_FILENAME'];
+	  $currentPage = basename($path,  '.php');
+	?>
+<ul>
+	<li><a
+	 <?php  if ($currentPage == 'index') {	echo 'id="active"';}?>
+	 	href="index.php">Home</a></li>
+	<?php
+		$query = "SELECT * FROM tbl_page";
+		$pages = $db->select($query);
+		if ($pages) {
+		while ($result = $pages->fetch_assoc()){   ?>  
+		<li><a
+		<?php
+//	highlight current page or menu item		 
+  if (isset($_GET['pageid']) && $_GET['pageid'] == $result['id']) {
+	 echo 'id="active"';
+  }
+	?>
+		href="page.php?pageid=<?php echo $result['id']?>"><?php echo $result['name']?></a></li>
+
+		<?php }  } ?>
+	<li><a
+	<?php  if ($currentPage == 'contact') {	echo 'id="active"';}?>
+	href="contact.php">Contact</a></li>
+</ul>
 </div>
